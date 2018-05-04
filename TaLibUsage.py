@@ -19,59 +19,63 @@ series,ts = hw.get_kfromjson(ls.load_k(args.file))
 np.transpose(np.array(series),(1,0))
 close = np.transpose(np.array(series),(1,0))[1]
 
+_, axes = plt.subplots(2, 1, sharex=True)
+axes[0].plot(close, 'rd-', markersize=3)
+
+colorlist = ['g-','c-','m-', 'k-']
+coloridx = 0
+
 # 重叠指标
 def overlap_process(event):
+    global coloridx, colorlist
     print(event.widget.get())
     overlap = event.widget.get()
     
-    upperband, middleband, lowerband = ta.BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-    fig, axes = plt.subplots(2, 1, sharex=True)
-    ax1, ax2 = axes[0], axes[1]
-    axes[0].plot(close, 'rd-', markersize=3)
-    axes[0].plot(upperband, 'y-')
-    axes[0].plot(middleband, 'b-')
-    axes[0].plot(lowerband, 'y-')
     axes[0].set_title(overlap, fontproperties="SimHei")
-    
+
     if overlap == '布林线':
-        pass
+        upperband, middleband, lowerband = ta.BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+        axes[0].plot(upperband, 'y-')
+        axes[0].plot(middleband, 'b-')
+        axes[0].plot(lowerband, 'y-')
     elif overlap == '双指数移动平均线':
         real = ta.DEMA(close, timeperiod=30)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real, colorlist[coloridx])
     elif overlap == '指数移动平均线 ':
         real = ta.EMA(close, timeperiod=30)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real, colorlist[coloridx])
     elif overlap == '希尔伯特变换——瞬时趋势线':
         real = ta.HT_TRENDLINE(close)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real, colorlist[coloridx])
     elif overlap == '考夫曼自适应移动平均线':
         real = ta.KAMA(close, timeperiod=30)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real, colorlist[coloridx])
     elif overlap == '移动平均线':
         real = ta.MA(close, timeperiod=30, matype=0)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real,colorlist[coloridx])
     elif overlap == 'MESA自适应移动平均':
         mama, fama = ta.MAMA(close, fastlimit=0, slowlimit=0)
-        axes[1].plot(mama, 'r-')
-        axes[1].plot(fama, 'g-')
+        axes[0].plot(mama,colorlist[coloridx])
+        axes[0].plot(fama, 'g-')
     elif overlap == '变周期移动平均线':
         real = ta.MAVP(close, periods, minperiod=2, maxperiod=30, matype=0)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real,colorlist[coloridx])
     elif overlap == '简单移动平均线':
         real = ta.SMA(close, timeperiod=30)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real,colorlist[coloridx])
     elif overlap == '三指数移动平均线(T3)':
         real = ta.T3(close, timeperiod=5, vfactor=0)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real,colorlist[coloridx])
     elif overlap == '三指数移动平均线':
         real = ta.TEMA(close, timeperiod=30)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real,colorlist[coloridx])
     elif overlap == '三角形加权法 ':
         real = ta.TRIMA(close, timeperiod=30)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real,colorlist[coloridx])
     elif overlap == '加权移动平均数':
         real = ta.WMA(close, timeperiod=30)
-        axes[1].plot(real, 'r-')
+        axes[0].plot(real,colorlist[coloridx])
+    coloridx = coloridx + 1
     plt.show()
  
 # 动量指标
@@ -79,14 +83,7 @@ def momentum_process(event):
     print(event.widget.get())
     momentum = event.widget.get()
     
-    upperband, middleband, lowerband = ta.BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-    fig, axes = plt.subplots(2, 1, sharex=True)
-    ax1, ax2 = axes[0], axes[1]
-    axes[0].plot(close, 'rd-', markersize=3)
-    axes[0].plot(upperband, 'y-')
-    axes[0].plot(middleband, 'b-')
-    axes[0].plot(lowerband, 'y-')
-    axes[0].set_title(momentum, fontproperties="SimHei")
+    axes[1].set_title(momentum, fontproperties="SimHei")
     
     if momentum == '绝对价格振荡器':
         real = ta.APO(close, fastperiod=12, slowperiod=26, matype=0)
@@ -145,14 +142,7 @@ def cycle_process(event):
     print(event.widget.get())
     cycle = event.widget.get()
     
-    upperband, middleband, lowerband = ta.BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-    fig, axes = plt.subplots(2, 1, sharex=True)
-    ax1, ax2 = axes[0], axes[1]
-    axes[0].plot(close, 'rd-', markersize=3)
-    axes[0].plot(upperband, 'y-')
-    axes[0].plot(middleband, 'b-')
-    axes[0].plot(lowerband, 'y-')
-    axes[0].set_title(cycle, fontproperties="SimHei")
+    axes[1].set_title(cycle, fontproperties="SimHei")
     
     if cycle == '希尔伯特变换——主要的循环周期':
         real = ta.HT_DCPERIOD(close)
@@ -180,14 +170,7 @@ def statistic_process(event):
     print(event.widget.get())
     statistic = event.widget.get()
     
-    upperband, middleband, lowerband = ta.BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-    fig, axes = plt.subplots(2, 1, sharex=True)
-    ax1, ax2 = axes[0], axes[1]
-    axes[0].plot(close, 'rd-', markersize=3)
-    axes[0].plot(upperband, 'y-')
-    axes[0].plot(middleband, 'b-')
-    axes[0].plot(lowerband, 'y-')
-    axes[0].set_title(statistic, fontproperties="SimHei")
+    axes[1].set_title(statistic, fontproperties="SimHei")
     
     if statistic == '线性回归':
         real = ta.LINEARREG(close, timeperiod=14)
@@ -219,15 +202,7 @@ def math_transform_process(event):
     print(event.widget.get())
     math_transform = event.widget.get()
     
-    upperband, middleband, lowerband = ta.BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-    fig, axes = plt.subplots(2, 1, sharex=True)
-    ax1, ax2 = axes[0], axes[1]
-    axes[0].plot(close, 'rd-', markersize=3)
-    axes[0].plot(upperband, 'y-')
-    axes[0].plot(middleband, 'b-')
-    axes[0].plot(lowerband, 'y-')
-    axes[0].set_title(math_transform, fontproperties="SimHei")
-    
+    axes[1].set_title(math_transform, fontproperties="SimHei")
 
     if math_transform == '反余弦':
         real = ta.ACOS(close)
@@ -283,15 +258,7 @@ def math_operator_process(event):
     print(event.widget.get())
     math_operator = event.widget.get()
     
-    upperband, middleband, lowerband = ta.BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-    fig, axes = plt.subplots(2, 1, sharex=True)
-    ax1, ax2 = axes[0], axes[1]
-    axes[0].plot(close, 'rd-', markersize=3)
-    axes[0].plot(upperband, 'y-')
-    axes[0].plot(middleband, 'b-')
-    axes[0].plot(lowerband, 'y-')
-    axes[0].set_title(math_operator, fontproperties="SimHei")
-    
+    axes[1].set_title(math_operator, fontproperties="SimHei")
     
     if math_operator == '指定的期间的最大值':
         real = ta.MAX(close, timeperiod=30)

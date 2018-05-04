@@ -17,7 +17,7 @@ def get_kline(symbol, period, size=150):
     """
     :param symbol
     :param period: 可选值：{1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year }
-    :param size: 可选值： [1,2000]
+    :param size: 可选值： [1,1000]
     :return:
     """
     params = {'symbol': symbol,
@@ -43,14 +43,16 @@ def get_depth(symbol, type):
 
 
 # 获取tradedetail
-def get_trade(symbol):
+def get_trade(symbol, size=100):
     """
     :param symbol
+    :param size: 可选值： [1,1000]
     :return:
     """
-    params = {'symbol': symbol}
+    params = {'symbol': symbol,
+              'size': size}
 
-    url = MARKET_URL + '/market/trade'
+    url = MARKET_URL + '/market/history/trade'
     return http_get_request(url, params)
 
 
